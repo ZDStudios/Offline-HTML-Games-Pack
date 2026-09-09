@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arcade.local — offline game library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f13;
+    --panel: #171a21;
+    --panel-hover: #1d222c;
+    --line: #262b35;
+    --text: #e7e4da;
+    --text-dim: #838b99;
+    --amber: #ffb454;
+    --amber-dim: #7a5a2e;
+    --teal: #5fd8c4;
+    --teal-dim: #2f5e56;
+    --violet: #b592f0;
+    --violet-dim: #574a72;
+    --danger: #ff8a80;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 500px at 15% -10%, rgba(255,180,84,0.06), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+  }
+
+  .window {
+    border: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .window-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .dot.red { background: #4a3230; }
+  .dot.yellow { background: #4a4230; }
+  .dot.green { background: #2f4a38; }
+
+  .window-bar-label {
+    margin-left: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .window-body { padding: 28px 28px 24px; }
+
+  .boot-line {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .boot-line .prompt { color: var(--teal); }
+
+  h1 {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: clamp(28px, 5vw, 40px);
+    color: var(--amber);
+    margin: 10px 0 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 52ch;
+    margin: 0 0 22px;
+  }
+
+  .status {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    min-height: 18px;
+  }
+
+  .status .n { color: var(--teal); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .status.loading .n::after {
+      content: '';
+      display: inline-block;
+      width: 1ch;
+      animation: blink 1s steps(1) infinite;
+    }
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 10px 14px;
+    margin-bottom: 22px;
+  }
+
+  .search-row .glyph { color: var(--teal); font-family: var(--mono); }
+
+  .search-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+
+  .search-row input::placeholder { color: #4d5462; }
+
+  .count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: -12px 0 16px;
+  }
+
+  .count .n { color: var(--amber); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .cartridge {
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent-dim, var(--amber-dim));
+    padding: 14px 14px 12px;
+    cursor: pointer;
+    font-family: var(--sans);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+
+  .cartridge:hover,
+  .cartridge:focus-visible {
+    background: var(--panel-hover);
+    border-left-color: var(--accent, var(--amber));
+  }
+
+  .cartridge:focus-visible { outline: 2px solid var(--accent, var(--amber)); outline-offset: -2px; }
+
+  .cartridge .name {
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .cartridge .name .play {
+    color: var(--accent, var(--amber));
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .cartridge .file {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .empty, .error {
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+  }
+
+  .error {
+    border-left: 3px solid var(--danger);
+    color: var(--text);
+  }
+
+  .error a, footer a { color: var(--teal); }
+  .error button {
+    margin-top: 12px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .error button:hover { border-color: var(--amber); color: var(--amber); }
+
+  footer {
+    margin-top: 26px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  footer p { margin: 4px 0; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="window">
+      <div class="window-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="window-bar-label">offline/ — ZDStudios/Offline-HTML-Games-Pack</span>
+      </div>
+      <div class="window-body">
+        <div class="boot-line"><span class="prompt">&gt;</span> reading offline/ from the games pack repo</div>
+        <h1>arcade.local</h1>
+        <p class="subtitle">Every game in the offline pack, indexed live from GitHub. Pick one and it opens, fully playable, in a new tab.</p>
+
+        <div class="status loading" id="status">
+          <span class="prompt">&gt;</span> contacting github<span class="n">…</span>
+        </div>
+
+        <div class="search-row">
+          <span class="glyph">/</span>
+          <input id="search" type="text" placeholder="search games" aria-label="Search games" disabled>
+        </div>
+
+        <div class="count" id="count"></div>
+
+        <div id="results"></div>
+
+        <footer>
+          <p>Source: <a href="https://github.com/ZDStudios/Offline-HTML-Games-Pack" target="_blank" rel="noopener">ZDStudios/Offline-HTML-Games-Pack</a> — games open via jsDelivr's GitHub mirror so they render as real pages instead of source text.</p>
+          <p>The list loads from GitHub's public API, which allows roughly 60 requests per hour per network — reload sparingly.</p>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var OWNER = 'ZDStudios';
+  var REPO = 'Offline-HTML-Games-Pack';
+  var BRANCH = 'master';
+  var FOLDER = 'offline/';
+
+  var statusEl = document.getElementById('status');
+  var searchEl = document.getElementById('search');
+  var resultsEl = document.getElementById('results');
+  var countEl = document.getElementById('count');
+
+  var allGames = [];
+
+  function setCount(shown, total) {
+    if (shown === total) {
+      countEl.innerHTML = '<span class="n">' + total + '</span> game' + (total === 1 ? '' : 's') + ' available';
+    } else {
+      countEl.innerHTML = 'showing <span class="n">' + shown + '</span> of ' + total + ' games';
+    }
+  }
+
+  function setStatus(html, cls) {
+    statusEl.className = 'status' + (cls ? ' ' + cls : '');
+    statusEl.innerHTML = html;
+  }
+
+  function prettify(filename) {
+    var base = filename.replace(/\.html?$/i, '');
+    base = base.replace(/[-_]+/g, ' ');
+    base = base.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+    base = base.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
+    base = base.replace(/\s+/g, ' ').trim();
+    base = base.split(' ').map(function (w) {
+      if (/^[A-Z0-9]+$/.test(w)) return w;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    }).join(' ');
+    return base || filename;
+  }
+
+  var ACCENTS = [
+    { accent: 'var(--amber)', dim: 'var(--amber-dim)' },
+    { accent: 'var(--teal)', dim: 'var(--teal-dim)' },
+    { accent: 'var(--violet)', dim: 'var(--violet-dim)' }
+  ];
+
+  function accentFor(name) {
+    var h = 0;
+    for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return ACCENTS[h % ACCENTS.length];
+  }
+
+  function jsdelivrUrl(path) {
+    var encoded = path.split('/').map(encodeURIComponent).join('/');
+    return 'https://cdn.jsdelivr.net/gh/' + OWNER + '/' + REPO + '@' + BRANCH + '/' + encoded;
+  }
+
+  function render(list) {
+    setCount(list.length, allGames.length);
+    resultsEl.innerHTML = '';
+    if (list.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.innerHTML = '<span class="boot-line"><span class="prompt">&gt;</span></span> no games match that search';
+      resultsEl.appendChild(empty);
+      return;
+    }
+    var grid = document.createElement('div');
+    grid.className = 'grid';
+    list.forEach(function (game) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'cartridge';
+      card.style.setProperty('--accent', game.accent.accent);
+      card.style.setProperty('--accent-dim', game.accent.dim);
+      card.innerHTML =
+        '<span class="name"><span>' + game.label + '</span><span class="play">&#9654;</span></span>' +
+        '<span class="file">' + game.file + '</span>';
+      card.addEventListener('click', function () {
+        window.open(game.url, '_blank', 'noopener');
+      });
+      grid.appendChild(card);
+    });
+    resultsEl.appendChild(grid);
+  }
+
+  function applyFilter() {
+    var q = searchEl.value.trim().toLowerCase();
+    if (!q) { render(allGames); return; }
+    render(allGames.filter(function (g) {
+      return g.label.toLowerCase().indexOf(q) !== -1 || g.file.toLowerCase().indexOf(q) !== -1;
+    }));
+  }
+
+  function showError(reason) {
+    setStatus('<span class="prompt">&gt;</span> manifest fetch failed');
+    var box = document.createElement('div');
+    box.className = 'error';
+    box.innerHTML =
+      '<div>Couldn\u2019t load the game list (' + reason + ').</div>' +
+      '<div style="margin-top:6px;">This is usually GitHub\u2019s API rate limit, or no network access. You can ' +
+      '<a href="https://github.com/' + OWNER + '/' + REPO + '/tree/' + BRANCH + '/' + FOLDER + '" target="_blank" rel="noopener">browse the folder directly on GitHub</a> instead.</div>' +
+      '<button type="button" id="retry">retry</button>';
+    resultsEl.innerHTML = '';
+    resultsEl.appendChild(box);
+    document.getElementById('retry').addEventListener('click', load);
+  }
+
+  function load() {
+    setStatus('<span class="prompt">&gt;</span> contacting github<span class="n">\u2026</span>', 'loading');
+    searchEl.disabled = true;
+    resultsEl.innerHTML = '';
+    countEl.innerHTML = '';
+
+    var treeUrl = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/git/trees/' + BRANCH + '?recursive=1';
+
+    fetch(treeUrl, { headers: { Accept: 'application/vnd.github+json' } })
+      .then(function (res) {
+        if (!res.ok) {
+          if (res.status === 403) throw new Error('rate limited by GitHub, try again later');
+          throw new Error('HTTP ' + res.status);
+        }
+        return res.json();
+      })
+      .then(function (data) {
+        var files = (data.tree || []).filter(function (item) {
+          return item.type === 'blob' && item.path.indexOf(FOLDER) === 0 && /\.html?$/i.test(item.path);
+        });
+
+        if (files.length === 0) throw new Error('no games found in ' + FOLDER);
+
+        allGames = files.map(function (item) {
+          var file = item.path.slice(FOLDER.length);
+          return {
+            file: file,
+            label: prettify(file),
+            url: jsdelivrUrl(item.path),
+            accent: accentFor(file)
+          };
+        }).sort(function (a, b) { return a.label.localeCompare(b.label); });
+
+        setStatus('<span class="prompt">&gt;</span> <span class="n">' + allGames.length + '</span> cartridges indexed');
+        searchEl.disabled = false;
+        render(allGames);
+      })
+      .catch(function (err) {
+        showError(err.message || 'unknown error');
+      });
+  }
+
+  searchEl.addEventListener('input', applyFilter);
+  load();
+})();
+</script>
+</body>
+</html>
