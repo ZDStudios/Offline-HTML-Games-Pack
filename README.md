@@ -2,10 +2,6 @@
 
 A lightweight collection of single-file, browser-based games you can download and play completely offline. No servers, build steps, or dependencies required.
 
-## Included Games
-
-
----
 
 ## How to Play
 
