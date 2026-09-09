@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>arcade.local — offline game library</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACY0lEQVR4nO3dvU3DYBRAUUC0kCIbIBahZQUaCgZgFAagoGEFWhZBDMEEdAgQN0rkfMSJzqkdJ8XV05Pin+OzxfII/nKy6x/AfImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEin40798Xw17uR8Ob95HXRmk4MkDpI4SOIgHZ8tlts6lw10Dra4n5ocJHGQxEESB2nSQmoD/e728n79g5/eHkb9jp+m7KcmB0kcJHGQxEHabCEdt4FO2Zt2tRdvtIGuNs/91OQgiYMkDpI4SOIgiYMkDpI4SOIgDbypadzNNlO+yGUG6zM5SOIgiYMkDtLAhfTg/fqffco1pC/vj+t/9vribv2DpzA5SOIgiYMkDpKFdGs2ug50ow109WfH7acmB0kcJHGQxEGay3NI9/GmpoNncpDEQRIHSRwkcZDEQRIHSRwkcZA8h3QWxl1D6jmkDCEOkjhI4iB5U9Oh8aYm/oM4SOIgiYO0zYX0F/vp//Aue3ZAHCRxkMRBGriQsu9MDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDtInIYE8K8t+yvMAAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACY0lEQVR4nO3dvU3DYBRAUUC0kCIbIBahZQUaCgZgFAagoGEFWhZBDMEEdAgQN0rkfMSJzqkdJ8XV05Pin+OzxfII/nKy6x/AfImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEin40798Xw17uR8Ob95HXRmk4MkDpI4SOIgHZ8tlts6lw10Dra4n5ocJHGQxEESB2nSQmoD/e728n79g5/eHkb9jp+m7KcmB0kcJHGQxEHabCEdt4FO2Zt2tRdvtIGuNs/91OQgiYMkDpI4SOIgiYMkDpI4SOIgDbypadzNNlO+yGUG6zM5SOIgiYMkDtLAhfTg/fqffco1pC/vj+t/9vribv2DpzA5SOIgiYMkDpKFdGs2ug50ow109WfH7acmB0kcJHGQxEGay3NI9/GmpoNncpDEQRIHSRwkcZDEQRIHSRwkcZA8h3QWxl1D6jmkDCEOkjhI4iB5U9Oh8aYm/oM4SOIgiYO0zYX0F/vp//Aue3ZAHCRxkMRBGriQsu9MDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDtInIYE8K8t+yvMAAAAASUVORK5CYII=">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22arcade.local%22,%22short_name%22:%22Arcade%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d0f13%22,%22theme_color%22:%22%230d0f13%22}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arcade">
+<meta name="theme-color" content="#0d0f13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -100,12 +107,28 @@
 
   .boot-line .prompt { color: var(--teal); }
 
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 6px;
+  }
+
+  .site-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    image-rendering: pixelated;
+    flex-shrink: 0;
+  }
+
   h1 {
     font-family: var(--mono);
     font-weight: 600;
     font-size: clamp(28px, 5vw, 40px);
     color: var(--amber);
-    margin: 10px 0 6px;
+    margin: 0;
     letter-spacing: -0.01em;
   }
 
@@ -271,7 +294,10 @@
       </div>
       <div class="window-body">
         <div class="boot-line"><span class="prompt">&gt;</span> reading offline/ from the games pack repo</div>
-        <h1>arcade.local</h1>
+        <div class="title-row">
+          <img class="site-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAACY0lEQVR4nO3dvU3DYBRAUUC0kCIbIBahZQUaCgZgFAagoGEFWhZBDMEEdAgQN0rkfMSJzqkdJ8XV05Pin+OzxfII/nKy6x/AfImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEin40798Xw17uR8Ob95HXRmk4MkDpI4SOIgHZ8tlts6lw10Dra4n5ocJHGQxEESB2nSQmoD/e728n79g5/eHkb9jp+m7KcmB0kcJHGQxEHabCEdt4FO2Zt2tRdvtIGuNs/91OQgiYMkDpI4SOIgiYMkDpI4SOIgDbypadzNNlO+yGUG6zM5SOIgiYMkDtLAhfTg/fqffco1pC/vj+t/9vribv2DpzA5SOIgiYMkDpKFdGs2ug50ow109WfH7acmB0kcJHGQxEGay3NI9/GmpoNncpDEQRIHSRwkcZDEQRIHSRwkcZA8h3QWxl1D6jmkDCEOkjhI4iB5U9Oh8aYm/oM4SOIgiYO0zYX0F/vp//Aue3ZAHCRxkMRBGriQsu9MDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDpI4SOIgiYMkDtInIYE8K8t+yvMAAAAASUVORK5CYII=" alt="" width="40" height="40">
+          <h1>arcade.local</h1>
+        </div>
         <p class="subtitle">Every game in the offline pack, indexed live from GitHub. Pick one and it opens, fully playable, in a new tab.</p>
 
         <div class="status loading" id="status">
