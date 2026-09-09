@@ -52,10 +52,15 @@
   .window-bar {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 8px;
     gap: 7px;
     padding: 10px 14px;
     border-bottom: 1px solid var(--line);
   }
+
+  .window-bar-left { display: flex; align-items: center; gap: 7px; }
 
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
   .dot.red { background: #4a3230; }
@@ -67,6 +72,22 @@
     font-family: var(--mono);
     font-size: 12px;
     color: var(--text-dim);
+  }
+
+  .dl-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    white-space: nowrap;
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+
+  .dl-btn:hover, .dl-btn:focus-visible {
+    border-color: var(--amber);
+    color: var(--amber);
   }
 
   .window-body { padding: 28px 28px 24px; }
@@ -240,10 +261,13 @@
   <div class="wrap">
     <div class="window">
       <div class="window-bar">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
-        <span class="dot green"></span>
-        <span class="window-bar-label">offline/ — ZDStudios/Offline-HTML-Games-Pack</span>
+        <div class="window-bar-left">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="window-bar-label">offline/ — ZDStudios/Offline-HTML-Games-Pack</span>
+        </div>
+        <a class="dl-btn" href="https://github.com/ZDStudios/Offline-HTML-Games-Pack/archive/refs/heads/master.zip" download>&#8681; download full repo (.zip)</a>
       </div>
       <div class="window-body">
         <div class="boot-line"><span class="prompt">&gt;</span> reading offline/ from the games pack repo</div>
@@ -264,8 +288,8 @@
         <div id="results"></div>
 
         <footer>
-          <p>Source: <a href="https://github.com/ZDStudios/Offline-HTML-Games-Pack" target="_blank" rel="noopener">ZDStudios/Offline-HTML-Games-Pack</a> — games open via jsDelivr's GitHub mirror so they render as real pages instead of source text.</p>
-          <p>The list loads from GitHub's public API, which allows roughly 60 requests per hour per network — reload sparingly.</p>
+          <p>Source: <a href="https://github.com/ZDStudios/Offline-HTML-Games-Pack" target="_blank" rel="noopener">ZDStudios/Offline-HTML-Games-Pack</a> — games open via raw.githack.com, a free proxy that serves GitHub files with the correct type so they render as real pages instead of source text.</p>
+          <p>The list loads from GitHub's public API (roughly 60 requests per hour per network), and githack is a small free service — fine for personal browsing, best not hammered.</p>
         </footer>
       </div>
     </div>
@@ -323,9 +347,9 @@
     return ACCENTS[h % ACCENTS.length];
   }
 
-  function jsdelivrUrl(path) {
+  function githackUrl(path) {
     var encoded = path.split('/').map(encodeURIComponent).join('/');
-    return 'https://cdn.jsdelivr.net/gh/' + OWNER + '/' + REPO + '@' + BRANCH + '/' + encoded;
+    return 'https://raw.githack.com/' + OWNER + '/' + REPO + '/' + BRANCH + '/' + encoded;
   }
 
   function render(list) {
@@ -407,7 +431,7 @@
           return {
             file: file,
             label: prettify(file),
-            url: jsdelivrUrl(item.path),
+            url: githackUrl(item.path),
             accent: accentFor(file)
           };
         }).sort(function (a, b) { return a.label.localeCompare(b.label); });
